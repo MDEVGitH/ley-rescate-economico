@@ -6,7 +6,7 @@
 (() => {
   'use strict';
 
-  const DEFAULTS = { salario: 16000000, dependientes: 0, prepagada: 0, vivienda: 0, afc: 0, smlmv: 1750905, uvt: 52374 };
+  const DEFAULTS = { salario: 1750905, dependientes: 0, prepagada: 0, vivienda: 0, afc: 0, smlmv: 1750905, uvt: 52374 };
 
   /* ---------- Reglas ---------- */
 
