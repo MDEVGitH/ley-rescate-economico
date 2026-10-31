@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leyes Transparentes · Calculadora Ley de Rescate Económico</title>
+  <meta name="description" content="Calcula cuánto te llegaría al mes hoy y con el Proyecto de Ley de Rescate Económico (PL 477 de 2026).">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <!-- ===== NAVBAR ===== -->
+  <header class="navbar">
+    <div class="container navbar__inner">
+      <a href="#inicio" class="brand" aria-label="Leyes Transparentes, inicio">
+        <span class="brand__icon" aria-hidden="true">⚖</span>
+        <span class="brand__name">Leyes <strong>Transparentes</strong></span>
+      </a>
+      <button class="navbar__toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="navMenu">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="navbar__menu" id="navMenu" aria-label="Principal">
+        <a href="#calculadora">Calculadora</a>
+        <a href="#resultados">Resultados</a>
+        <a href="#cambios">¿Qué cambia?</a>
+        <a href="#detalle">Detalle</a>
+        <a href="../multimedia/ley.pdf" download="Proyecto-Ley-Rescate-Economico-PL477-2026.pdf" class="nav-btn nav-btn--pdf">
+          <span aria-hidden="true">⬇</span> Descargar ley (PDF)
+        </a>
+        <a href="#donar" class="nav-btn nav-btn--donar" data-open="donar">
+          <span aria-hidden="true">♥</span> Donar
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="inicio">
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+      <div class="container">
+        <p class="hero__tag">Proyecto de Ley 477 de 2026 Cámara</p>
+        <h1>¿Cuánto te llegaría al mes con la <span class="accent">Ley de Rescate Económico</span>?</h1>
+        <p class="hero__lead">Ingresa tu salario y tus deducciones y compara lo que recibes hoy contra lo que recibirías si el proyecto se aprueba tal como fue radicado.</p>
+      </div>
+    </section>
+
+    <!-- ===== CALCULADORA ===== -->
+    <section class="container layout" id="calculadora">
+      <form class="card form" id="calcForm" novalidate>
+        <h2 class="card__title">Tus datos</h2>
+
+        <div class="field">
+          <label for="salario">Salario mensual (empleado)</label>
+          <div class="input-money">
+            <span>$</span>
+            <input type="text" id="salario" inputmode="numeric" autocomplete="off" value="16.000.000" aria-describedby="salarioHelp">
+          </div>
+          <small id="salarioHelp" class="field__help">Salario ordinario antes de descuentos.</small>
+          <small class="field__error" id="salarioError" role="alert"></small>
+        </div>
+
+        <div class="field">
+          <label for="dependientes">Personas a cargo (dependientes)</label>
+          <div class="stepper">
+            <button type="button" class="stepper__btn" data-step="-1" aria-label="Quitar dependiente">−</button>
+            <input type="number" id="dependientes" min="0" max="4" value="0" aria-describedby="depHelp">
+            <button type="button" class="stepper__btn" data-step="1" aria-label="Agregar dependiente">+</button>
+          </div>
+          <small id="depHelp" class="field__help">Hijos, cónyuge o padres que dependen de ti (máximo 4).</small>
+        </div>
+
+        <fieldset class="fieldset">
+          <legend>Otras deducciones mensuales <span class="optional">(opcional)</span></legend>
+
+          <div class="field">
+            <label for="prepagada">Medicina prepagada / póliza de salud</label>
+            <div class="input-money"><span>$</span><input type="text" id="prepagada" inputmode="numeric" autocomplete="off" value="0"></div>
+          </div>
+
+          <div class="field">
+            <label for="vivienda">Intereses de crédito de vivienda</label>
+            <div class="input-money"><span>$</span><input type="text" id="vivienda" inputmode="numeric" autocomplete="off" value="0"></div>
+          </div>
+
+          <div class="field">
+            <label for="afc">Aportes voluntarios AFC / pensión voluntaria</label>
+            <div class="input-money"><span>$</span><input type="text" id="afc" inputmode="numeric" autocomplete="off" value="0"></div>
+            <small class="field__help">Es tu ahorro: no se resta de lo que te llega.</small>
+          </div>
+        </fieldset>
+
+        <details class="advanced">
+          <summary>Parámetros avanzados</summary>
+          <div class="field">
+            <label for="smlmv">Salario mínimo (SMLMV)</label>
+            <div class="input-money"><span>$</span><input type="text" id="smlmv" inputmode="numeric" autocomplete="off" value="1.750.905"></div>
+          </div>
+          <div class="field">
+            <label for="uvt">Valor de la UVT</label>
+            <div class="input-money"><span>$</span><input type="text" id="uvt" inputmode="numeric" autocomplete="off" value="52.374"></div>
+          </div>
+          <small class="field__help">Valores de 2026. La ley aplicaría desde 2027 con los valores que se fijen ese año.</small>
+        </details>
+
+        <button type="button" class="btn btn--ghost" id="resetBtn">Restablecer valores</button>
+      </form>
+
+      <!-- ===== RESULTADOS ===== -->
+      <div class="results" id="resultados" aria-live="polite">
+        <div class="smlmv-card card">
+          <div>
+            <p class="eyebrow">Tu salario equivale a</p>
+            <p class="smlmv-card__value"><span id="smlmvCount">9,14</span> <small>salarios mínimos</small></p>
+          </div>
+          <div class="smlmv-card__band">
+            <p class="eyebrow">Aporte a salud</p>
+            <p><span class="pill pill--now" id="saludHoy">4%</span> <span class="arrow" aria-hidden="true">→</span> <span class="pill pill--law" id="saludLey">6,5%</span></p>
+            <p class="muted" id="bandaTexto">Rango: más de 5 y hasta 10 SMLMV</p>
+          </div>
+        </div>
+
+        <div class="stats">
+          <article class="stat card">
+            <p class="stat__label"><span class="swatch swatch--now" aria-hidden="true"></span>Te llega hoy</p>
+            <p class="stat__value" id="netoHoy">$0</p>
+            <p class="stat__sub">al mes</p>
+          </article>
+          <article class="stat card">
+            <p class="stat__label"><span class="swatch swatch--law" aria-hidden="true"></span>Te llegaría con la ley</p>
+            <p class="stat__value" id="netoLey">$0</p>
+            <p class="stat__sub">al mes</p>
+          </article>
+          <article class="stat card stat--diff">
+            <p class="stat__label">Diferencia</p>
+            <p class="stat__value" id="netoDiff">$0</p>
+            <p class="stat__sub" id="netoDiffAnual">al año: $0</p>
+          </article>
+        </div>
+
+        <article class="card chart-card">
+          <header class="chart-card__head">
+            <h3>Descuentos mensuales por concepto</h3>
+            <ul class="legend" aria-label="Leyenda">
+              <li><span class="swatch swatch--now"></span>Hoy</li>
+              <li><span class="swatch swatch--law"></span>Con la ley</li>
+            </ul>
+          </header>
+          <div class="chart" id="chartDescuentos" role="img" aria-label="Gráfico de descuentos mensuales hoy y con la ley"></div>
+        </article>
+
+        <article class="card chart-card">
+          <header class="chart-card__head">
+            <h3>¿Cuánto aportas a salud según tus salarios mínimos?</h3>
+            <ul class="legend" aria-label="Leyenda">
+              <li><span class="swatch swatch--law"></span>Tu rango</li>
+              <li><span class="swatch swatch--line"></span>Hoy (4%)</li>
+            </ul>
+            <p class="muted small">Tabla del artículo 21 del proyecto. Hoy todos los empleados aportan 4%.</p>
+          </header>
+          <div class="chart" id="chartSalud" role="img" aria-label="Gráfico de tarifas de salud por rango de salarios mínimos"></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===== QUÉ CAMBIA ===== -->
+    <section class="container section" id="cambios">
+      <h2 class="section__title">¿Qué cambia para un empleado?</h2>
+      <div class="cards-grid">
+        <article class="card info">
+          <h3>Salud progresiva</h3>
+          <p>Hoy el empleado aporta 4% a salud. Con la ley el aporte sube según cuántos salarios mínimos ganes: de 4% hasta 8%.</p>
+          <p class="info__ref">Art. 21</p>
+        </article>
+        <article class="card info">
+          <h3>Menos renta exenta</h3>
+          <p>El 25% exento de tu salario pasa de un tope de 790 UVT al año a 630 UVT al año.</p>
+          <p class="info__ref">Art. 47</p>
+        </article>
+        <article class="card info">
+          <h3>Tope global más bajo</h3>
+          <p>La suma de deducciones y rentas exentas baja de 1.340 UVT a 1.180 UVT al año (y sigue limitada al 40%).</p>
+          <p class="info__ref">Art. 49</p>
+        </article>
+        <article class="card info">
+          <h3>Adiós a las 72 UVT por dependiente</h3>
+          <p>Se elimina la deducción adicional de 72 UVT al año por cada dependiente (hasta 4), que hoy va por fuera del tope.</p>
+          <p class="info__ref">Art. 106</p>
+        </article>
+        <article class="card info">
+          <h3>Nueva tabla de retención</h3>
+          <p>Se empieza a retener desde 65 UVT al mes (hoy 95 UVT), con un nuevo tramo del 9%, y la tarifa máxima de 39% llega antes.</p>
+          <p class="info__ref">Arts. 48 y 50</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===== DETALLE ===== -->
+    <section class="container section" id="detalle">
+      <h2 class="section__title">Detalle del cálculo mensual</h2>
+      <div class="card table-wrap">
+        <table class="table" id="detalleTabla">
+          <thead>
+            <tr><th scope="col">Concepto</th><th scope="col">Hoy</th><th scope="col">Con la ley</th><th scope="col">Diferencia</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="note">Cálculo de la retención en la fuente mensual (procedimiento 1) sobre un salario ordinario. No incluye prima, cesantías ni la declaración anual de renta, cuyo resultado final puede variar. Pensión: 4% más el aporte al Fondo de Solidaridad Pensional cuando corresponde, igual en ambos escenarios. El proyecto aún está en trámite en el Congreso y su texto puede cambiar.</p>
+    </section>
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p class="brand brand--small"><span class="brand__icon" aria-hidden="true">⚖</span> Leyes <strong>Transparentes</strong></p>
+      <p class="footer__text">Herramienta informativa basada en el Proyecto de Ley 477 de 2026 Cámara. No constituye asesoría tributaria.</p>
+      <p class="footer__copy">© <span id="year">2026</span> Leyes Transparentes</p>
+    </div>
+  </footer>
+
+  <!-- ===== MODAL DONACIONES ===== -->
+  <div class="modal" id="donarModal" hidden>
+    <div class="modal__dialog card" role="dialog" aria-modal="true" aria-labelledby="donarTitulo">
+      <button type="button" class="modal__close" id="donarClose" aria-label="Cerrar">×</button>
+      <h2 id="donarTitulo">Apoya a Leyes Transparentes</h2>
+      <p class="modal__text">Esta página es gratuita. Si te fue útil, puedes donar para ayudar a mantenerla al día.</p>
+      <img src="../multimedia/qr.png" alt="Código QR para donar con Bre-B a la llave @mss308" class="modal__qr" width="220" height="220">
+      <p class="eyebrow">Llave Bre-B</p>
+      <div class="llave">
+        <span id="llaveBreb">@mss308</span>
+        <button type="button" class="btn-copy" id="copiarLlave">Copiar llave</button>
+      </div>
+      <p class="modal__hint">Escanea el QR desde la app de tu banco o envía a la llave desde la opción Bre-B.</p>
+    </div>
+  </div>
+
+  <div class="tooltip" id="tooltip" role="tooltip" hidden></div>
+
+  <script src="../javascript/app.js"></script>
+</body>
+</html>
