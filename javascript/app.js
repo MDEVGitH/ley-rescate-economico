@@ -264,6 +264,7 @@
     const W = Math.max(300, box.clientWidth);
     const narrow = W < 520;
     const cats = [
+      ...(hoy.auxilio ? [{ label: narrow ? '(+) Auxilio' : '(+) Auxilio de transporte', tip: 'Auxilio de transporte (ingreso)', a: hoy.auxilio, b: ley.auxilio }] : []),
       { label: 'Pensión', a: hoy.pension, b: ley.pension },
       { label: 'Salud', a: hoy.salud, b: ley.salud },
       { label: narrow ? 'Retención' : 'Retención en la fuente', a: hoy.retencion, b: ley.retencion },
@@ -276,6 +277,10 @@
     const plotW = W - left - right;
     const max = niceMax(Math.max(...cats.flatMap(c => [c.a, c.b])));
     const x = v => (v / max) * plotW;
+
+    $('tituloDescuentos').textContent = hoy.auxilio
+      ? 'Auxilio de transporte y descuentos mensuales'
+      : 'Descuentos mensuales por concepto';
 
     box.innerHTML = '';
     const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, width: W, height: H }, box);
@@ -307,7 +312,12 @@
       // Zona de interacción más grande que la marca
       const hit = el('rect', { x: 0, y: gy - groupGap / 2, width: W, height: groupH + groupGap, class: 'hit' }, g);
       const dif = c.b - c.a;
-      const html = `<strong>${cats[i].label === 'Retención' ? 'Retención en la fuente' : c.label}</strong>
+      // Separador entre el ingreso (auxilio) y los descuentos
+      if (c.tip && i < cats.length - 1) {
+        const sy = gy + groupH + groupGap / 2;
+        el('line', { x1: 8, x2: W - 8, y1: sy, y2: sy, stroke: css('--border'), 'stroke-width': 1, 'stroke-dasharray': '4 4' }, svg);
+      }
+      const html = `<strong>${c.tip || (c.label === 'Retención' ? 'Retención en la fuente' : c.label)}</strong>
         <div class="row"><span><span class="swatch swatch--now"></span>Hoy</span><span>${fmtCOP(c.a)}</span></div>
         <div class="row"><span><span class="swatch swatch--law"></span>Con la ley</span><span>${fmtCOP(c.b)}</span></div>
         <div class="row"><span>Diferencia</span><span>${dif >= 0 ? '+' : '−'}${fmtCOP(Math.abs(dif))}</span></div>`;
