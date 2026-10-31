@@ -6,7 +6,7 @@
 (() => {
   'use strict';
 
-  const DEFAULTS = { salario: 1750905, dependientes: 0, prepagada: 0, vivienda: 0, afc: 0, smlmv: 1750905, uvt: 52374 };
+  const DEFAULTS = { salario: 1750905, dependientes: 0, prepagada: 0, vivienda: 0, afc: 0, smlmv: 1750905, uvt: 52374, auxilio: 249095 };
 
   /* ---------- Reglas ---------- */
 
@@ -69,19 +69,23 @@
     const n = s / d.smlmv;
     const ibc = Math.min(Math.max(s, d.smlmv), 25 * d.smlmv);
     const nIbc = ibc / d.smlmv;
+    // Auxilio de transporte: para quienes devengan hasta 2 SMLMV.
+    // No hace parte del IBC (pensión/salud), pero sí es ingreso laboral y llega al trabajador.
+    const auxilio = s <= 2 * d.smlmv ? d.auxilio : 0;
+    const ingreso = s + auxilio;
 
     const pension = ibc * 0.04;
     const fsp = ibc * tasaFSP(nIbc);
     const tasaSalud = reg === 'hoy' ? SALUD_HOY : SALUD_LEY[bandaSalud(nIbc)].tasa;
     const salud = ibc * tasaSalud;
     const incr = pension + fsp + salud;
-    const rentaLiquida = Math.max(0, s - incr);
+    const rentaLiquida = Math.max(0, ingreso - incr);
 
     const deps = Math.min(Math.max(d.dependientes, 0), 4);
-    const dedDependiente = deps > 0 ? Math.min(0.10 * s, 32 * U) : 0;
+    const dedDependiente = deps > 0 ? Math.min(0.10 * ingreso, 32 * U) : 0;
     const dedPrepagada = Math.min(d.prepagada, 16 * U);
     const dedVivienda = Math.min(d.vivienda, 100 * U);
-    const exAfc = Math.min(d.afc, 0.30 * s, (3800 / 12) * U);
+    const exAfc = Math.min(d.afc, 0.30 * ingreso, (3800 / 12) * U);
 
     const deducciones = dedDependiente + dedPrepagada + dedVivienda;
     const base25 = Math.max(0, rentaLiquida - deducciones - exAfc);
@@ -100,10 +104,10 @@
     const retencion = Math.round((impuestoTabla(reg, baseUvt) * U) / 1000) * 1000;
 
     const totalDescuentos = pension + fsp + salud + retencion;
-    const neto = s - totalDescuentos;
+    const neto = ingreso - totalDescuentos;
 
     return {
-      n, tasaSalud, pension: pension + fsp, fsp, salud, rentaLiquida,
+      n, auxilio, tasaSalud, pension: pension + fsp, fsp, salud, rentaLiquida,
       dedDependiente, dedPrepagada, dedVivienda, exAfc, exenta25, tope25,
       subtotal, topeGlobal, aceptado, perdido, extra72, base, baseUvt,
       retencion, totalDescuentos, neto,
@@ -124,7 +128,7 @@
 
   /* ---------- DOM ---------- */
   const $ = id => document.getElementById(id);
-  const moneyIds = ['salario', 'prepagada', 'vivienda', 'afc', 'smlmv', 'uvt'];
+  const moneyIds = ['salario', 'prepagada', 'vivienda', 'afc', 'smlmv', 'uvt', 'auxilio'];
   const tooltip = $('tooltip');
 
   function leerDatos() {
@@ -133,6 +137,7 @@
     d.dependientes = Math.min(4, Math.max(0, parseInt($('dependientes').value, 10) || 0));
     if (!d.smlmv) d.smlmv = DEFAULTS.smlmv;
     if (!d.uvt) d.uvt = DEFAULTS.uvt;
+    if ($('auxilio').value.trim() === '') d.auxilio = DEFAULTS.auxilio;
     return d;
   }
 
@@ -179,6 +184,7 @@
   function renderTabla(d, hoy, ley) {
     const filas = [
       ['Salario mensual', d.salario, d.salario, ''],
+      ['(+) Auxilio de transporte' + (hoy.auxilio ? '' : ' (no aplica: ganas más de 2 SMLMV)'), hoy.auxilio, ley.auxilio, ''],
       ['Equivalencia en salarios mínimos', null, null, '', fmtNum(hoy.n) + ' SMLMV'],
       ['(−) Pensión obligatoria' + (hoy.fsp ? ' + Fondo de Solidaridad' : ''), -hoy.pension, -ley.pension, ''],
       ['(−) Salud (' + fmtPct(hoy.tasaSalud) + ' → ' + fmtPct(ley.tasaSalud) + ')', -hoy.salud, -ley.salud, ''],
