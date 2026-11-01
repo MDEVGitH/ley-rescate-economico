@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leyes Transparentes · ¿Qué productos suben de IVA?</title>
+  <meta name="description" content="Busca qué productos y servicios suben de IVA con el Proyecto de Ley de Rescate Económico (PL 477 de 2026): antes y después, por secciones.">
+  <link rel="icon" type="image/svg+xml" href="../multimedia/favicon.svg">
+  <link rel="icon" type="image/png" sizes="180x180" href="../multimedia/apple-touch-icon.png">
+  <link rel="apple-touch-icon" href="../multimedia/apple-touch-icon.png">
+  <meta name="theme-color" content="#0f0f0e">
+  <link rel="stylesheet" href="../css/styles.css">
+  <!-- Vercel Web Analytics (plan gratuito). Solo se carga en el sitio publicado, no en local. -->
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    if (location.protocol.indexOf('http') === 0 && !/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) {
+      var vaScript = document.createElement('script');
+      vaScript.defer = true;
+      vaScript.src = '/_vercel/insights/script.js';
+      document.head.appendChild(vaScript);
+    }
+  </script>
+</head>
+<body>
+  <!-- ===== NAVBAR ===== -->
+  <header class="navbar">
+    <div class="container navbar__inner">
+      <a href="index.html" class="brand" aria-label="Leyes Transparentes, inicio">
+        <span class="brand__icon" aria-hidden="true">⚖</span>
+        <span class="brand__name">Leyes <strong>Transparentes</strong></span>
+      </a>
+      <button class="navbar__toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="navMenu">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="navbar__menu" id="navMenu" aria-label="Principal">
+        <a href="index.html" data-page="calculadora">Calculadora</a>
+        <a href="iva.html" data-page="iva" aria-current="page">IVA</a>
+        <a href="../multimedia/ley.pdf" download="Proyecto-Ley-Rescate-Economico-PL477-2026.pdf" class="nav-btn nav-btn--pdf">
+          <span aria-hidden="true">⬇</span> Descargar ley (PDF)
+        </a>
+        <a href="#donar" class="nav-btn nav-btn--donar" data-open="donar">
+          <span aria-hidden="true">♥</span> Donar
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="inicio">
+    <section class="container section" id="iva">
+      <p class="hero__tag">Impuesto sobre las ventas</p>
+      <h1 class="section__title iva-title">🛒 ¿Qué productos suben de IVA?</h1>
+      <p class="iva-lead">Compara la tarifa de IVA que pagas hoy con la que pagarías si el proyecto se aprueba como fue radicado. La mayoría de cambios empiezan en <strong>2028</strong>, cuando desaparece la tarifa del 5% y se reescriben las listas de bienes y servicios sin IVA.</p>
+
+      <div class="iva-resumen">
+        <div class="card iva-stat iva-stat--sube"><span class="iva-stat__num" id="ivaSuben">0</span><span class="iva-stat__label">▲ suben de IVA</span></div>
+        <div class="card iva-stat iva-stat--igual"><span class="iva-stat__num" id="ivaIgual">0</span><span class="iva-stat__label">= se mantienen</span></div>
+        <div class="card iva-stat iva-stat--baja"><span class="iva-stat__num" id="ivaBajan">0</span><span class="iva-stat__label">▼ bajan de IVA</span></div>
+      </div>
+
+      <div class="card iva-filtros">
+        <label class="iva-buscar" for="ivaBuscar">
+          <span class="iva-buscar__icon" aria-hidden="true">🔎</span>
+          <input type="search" id="ivaBuscar" placeholder="Busca un producto: café, celular, queso, internet…" autocomplete="off" aria-label="Buscar producto">
+          <button type="button" class="iva-buscar__clear" id="ivaLimpiar" aria-label="Limpiar búsqueda">×</button>
+        </label>
+        <div class="chips" id="ivaEstados" role="group" aria-label="Filtrar por cambio"></div>
+        <div class="chips chips--scroll" id="ivaCategorias" role="group" aria-label="Filtrar por sección"></div>
+        <p class="iva-conteo" id="ivaConteo" aria-live="polite"></p>
+      </div>
+
+      <div class="iva-grid" id="ivaResultados"></div>
+      <p class="iva-vacio card" id="ivaVacio" hidden>😕 No encontramos productos con ese filtro. Prueba con otra palabra o elige “Todos”.</p>
+
+      <div class="card iva-efectiva">
+        <h3>💸 Devolución EfectIVA</h3>
+        <p>Desde 2028 el proyecto crea la devolución “EfectIVA”: los hogares de menores ingresos recibirán de vuelta parte del IVA que paguen en sus compras con factura electrónica, cada 15 días como máximo. Reemplaza la actual compensación del IVA. <span class="info__ref">Arts. 38 a 40</span></p>
+      </div>
+
+      <p class="note"><strong>Excluido</strong>: no paga IVA. <strong>Exento</strong>: tarifa 0% y el productor puede pedir la devolución del IVA de sus insumos. Para el consumidor ambos significan 0%. Listado elaborado a partir de los artículos 27, 41 a 46 y 106 del Proyecto de Ley 477 de 2026 Cámara; agrupa partidas arancelarias en nombres comunes, así que algunos productos específicos pueden tener una tarifa distinta. El proyecto aún está en trámite y su texto puede cambiar.</p>
+    </section>
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p class="brand brand--small"><span class="brand__icon" aria-hidden="true">⚖</span> Leyes <strong>Transparentes</strong></p>
+      <p class="footer__text">Herramienta informativa basada en el Proyecto de Ley 477 de 2026 Cámara. No constituye asesoría tributaria.</p>
+      <p class="footer__copy">© <span id="year">2026</span> Leyes Transparentes</p>
+    </div>
+  </footer>
+
+  <!-- ===== MODAL DONACIONES ===== -->
+  <div class="modal" id="donarModal" hidden>
+    <div class="modal__dialog card" role="dialog" aria-modal="true" aria-labelledby="donarTitulo">
+      <button type="button" class="modal__close" id="donarClose" aria-label="Cerrar">×</button>
+      <h2 id="donarTitulo">Apoya a Leyes Transparentes</h2>
+      <p class="modal__text">Esta página es gratuita. Si te fue útil, puedes donar para ayudar a mantenerla al día.</p>
+      <img src="../multimedia/qr.png" alt="Código QR para donar con Bre-B a la llave @mss308" class="modal__qr" width="220" height="220">
+      <p class="eyebrow">Llave Bre-B</p>
+      <div class="llave">
+        <span id="llaveBreb">@mss308</span>
+        <button type="button" class="btn-copy" id="copiarLlave">Copiar llave</button>
+      </div>
+      <p class="modal__hint">Escanea el QR desde la app de tu banco o envía a la llave desde la opción Bre-B.</p>
+    </div>
+  </div>
+
+
+  <script src="../javascript/comun.js"></script>
+  <script src="../javascript/iva.js"></script>
+</body>
+</html>

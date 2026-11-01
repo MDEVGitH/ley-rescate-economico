@@ -10,12 +10,22 @@
   <link rel="apple-touch-icon" href="../multimedia/apple-touch-icon.png">
   <meta name="theme-color" content="#0f0f0e">
   <link rel="stylesheet" href="../css/styles.css">
+  <!-- Vercel Web Analytics (plan gratuito). Solo se carga en el sitio publicado, no en local. -->
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    if (location.protocol.indexOf('http') === 0 && !/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) {
+      var vaScript = document.createElement('script');
+      vaScript.defer = true;
+      vaScript.src = '/_vercel/insights/script.js';
+      document.head.appendChild(vaScript);
+    }
+  </script>
 </head>
 <body>
   <!-- ===== NAVBAR ===== -->
   <header class="navbar">
     <div class="container navbar__inner">
-      <a href="#inicio" class="brand" aria-label="Leyes Transparentes, inicio">
+      <a href="index.html" class="brand" aria-label="Leyes Transparentes, inicio">
         <span class="brand__icon" aria-hidden="true">⚖</span>
         <span class="brand__name">Leyes <strong>Transparentes</strong></span>
       </a>
@@ -23,10 +33,8 @@
         <span></span><span></span><span></span>
       </button>
       <nav class="navbar__menu" id="navMenu" aria-label="Principal">
-        <a href="#calculadora">Calculadora</a>
-        <a href="#resultados">Resultados</a>
-        <a href="#cambios">¿Qué cambia?</a>
-        <a href="#detalle">Detalle</a>
+        <a href="index.html" data-page="calculadora" aria-current="page">Calculadora</a>
+        <a href="iva.html" data-page="iva">IVA</a>
         <a href="../multimedia/ley.pdf" download="Proyecto-Ley-Rescate-Economico-PL477-2026.pdf" class="nav-btn nav-btn--pdf">
           <span aria-hidden="true">⬇</span> Descargar ley (PDF)
         </a>
@@ -245,5 +253,6 @@
   <div class="tooltip" id="tooltip" role="tooltip" hidden></div>
 
   <script src="../javascript/app.js"></script>
+  <script src="../javascript/comun.js"></script>
 </body>
 </html>

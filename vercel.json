@@ -1,6 +1,9 @@
 {
   "rewrites": [
-    { "source": "/", "destination": "/html/index.html" }
+    { "source": "/", "destination": "/html/index.html" },
+    { "source": "/index.html", "destination": "/html/index.html" },
+    { "source": "/iva", "destination": "/html/iva.html" },
+    { "source": "/iva.html", "destination": "/html/iva.html" }
   ],
   "headers": [
     {
