@@ -178,6 +178,35 @@
       </div>
     </section>
 
+    <!-- ===== INVERSIÓN (solo si con la ley recibes menos) ===== -->
+    <section class="container section" id="inversion" hidden>
+      <h2 class="section__title">📈 ¿Y si invirtieras lo que pierdes con la ley?</h2>
+      <p class="inv-lead">Con la ley te llegarían <strong id="invAporte">$0</strong> menos cada mes. Si invirtieras esa diferencia todos los meses en un fondo que replique el <strong>S&amp;P 500</strong> durante <strong>20 años</strong>, así podría crecer tu patrimonio.</p>
+
+      <div class="card inv-card">
+        <div class="inv-controls">
+          <span class="inv-controls__label">Rentabilidad promedio anual:</span>
+          <div class="chips" id="invTasas" role="group" aria-label="Rentabilidad promedio anual">
+            <button type="button" class="chip" data-tasa="0.07" aria-pressed="false">7% · conservador</button>
+            <button type="button" class="chip is-active" data-tasa="0.10" aria-pressed="true">10% · promedio histórico</button>
+          </div>
+        </div>
+
+        <div class="inv-total">
+          <p class="stat__label">Tendrías en 20 años</p>
+          <p class="inv-total__value" id="invValorFinal">$0</p>
+          <p class="stat__sub" id="invMultiplo">valor estimado</p>
+        </div>
+
+        <header class="chart-card__head">
+          <h3>Crecimiento de tu patrimonio año a año</h3>
+        </header>
+        <div class="chart" id="chartInversion" role="img" aria-label="Gráfico del crecimiento de la inversión mensual en el S&P 500 durante 20 años"></div>
+      </div>
+
+      <p class="note">Simulación ilustrativa: aporte mensual fijo igual a la diferencia que pierdes, con interés compuesto mensual equivalente a la rentabilidad anual elegida. El S&amp;P 500 ha rentado cerca de 10% anual en promedio en dólares a largo plazo; 7% se aproxima a ese rendimiento descontando la inflación. No incluye comisiones, impuestos ni variaciones del dólar, y rentabilidades pasadas no garantizan rentabilidades futuras. No es una recomendación de inversión.</p>
+    </section>
+
     <!-- ===== QUÉ CAMBIA ===== -->
     <section class="container section" id="cambios">
       <h2 class="section__title">¿Qué cambia para un empleado?</h2>

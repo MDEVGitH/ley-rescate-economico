@@ -349,3 +349,21 @@ body { overflow-x: hidden; }
 /* Página activa en el navbar */
 .navbar__menu a[aria-current="page"] { color: var(--text-primary); background: var(--surface-2); font-weight: 600; }
 .iva-title { font-size: clamp(1.5rem, 3.5vw, 2.1rem); }
+
+/* ===== Inversión S&P 500 ===== */
+.inv-lead { color: var(--text-secondary); max-width: 860px; margin: -.4rem 0 1.2rem; }
+.inv-lead strong { color: var(--text-primary); }
+.inv-card { padding: 1.2rem 1.3rem 1rem; }
+.inv-controls { display: flex; align-items: center; flex-wrap: wrap; gap: .6rem 1rem; margin-bottom: 1rem; }
+.inv-controls__label { color: var(--text-secondary); font-size: .9rem; }
+.inv-stats { margin-bottom: 1.2rem; }
+.inv-stats .stat { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; }
+.inv-ganancia { color: var(--good); }
+.swatch--aporte { background: var(--neutral-bar); }
+.swatch--aporte-line { height: 0; border-top: 2px dashed var(--text-muted); border-radius: 0; width: 16px; }
+.chart .crosshair { stroke: var(--text-muted); stroke-width: 1; stroke-dasharray: 3 3; }
+@media (max-width: 720px) {
+  .inv-card { padding: 1rem .9rem .8rem; }
+}
+.inv-total { margin-bottom: 1.2rem; }
+.inv-total__value { font-size: clamp(1.8rem, 4.5vw, 2.6rem); font-weight: 700; line-height: 1.15; margin: .2rem 0; font-variant-numeric: tabular-nums; color: var(--series-now); }

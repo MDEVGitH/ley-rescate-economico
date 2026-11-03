@@ -178,6 +178,7 @@
     renderDescuentos(hoy, ley);
     renderSalud(Math.min(hoy.n, 25), idx);
     renderTabla(d, hoy, ley);
+    renderInversion(diff);
   }
 
   /* ---------- Tabla de detalle ---------- */
@@ -388,6 +389,106 @@
     axis.textContent = 'Salario en salarios mínimos (SMLMV)';
   }
 
+  /* ---------- Inversión en el S&P 500 ---------- */
+  const INV_ANIOS = 20;
+  let invTasa = 0.10;
+  let invAporte = 0;
+
+  // Aporte mensual fijo con interés compuesto mensual equivalente a la tasa anual
+  function simularInversion(aporte, tasaAnual, anios) {
+    const rm = Math.pow(1 + tasaAnual, 1 / 12) - 1;
+    const puntos = [{ anio: 0, aportado: 0, valor: 0 }];
+    let valor = 0;
+    for (let m = 1; m <= anios * 12; m++) {
+      valor = valor * (1 + rm) + aporte;
+      if (m % 12 === 0) puntos.push({ anio: m / 12, aportado: aporte * m, valor });
+    }
+    return puntos;
+  }
+
+  // $1.234 M / $12,3 mil M para ejes y etiquetas
+  function fmtCorto(v) {
+    if (v >= 1e9) return '$' + (v / 1e9).toLocaleString('es-CO', { maximumFractionDigits: 1 }) + ' mil M';
+    if (v >= 1e6) return '$' + (v / 1e6).toLocaleString('es-CO', { maximumFractionDigits: v >= 1e8 ? 0 : 1 }) + ' M';
+    if (v >= 1e3) return '$' + Math.round(v / 1e3).toLocaleString('es-CO') + ' mil';
+    return fmtCOP(v);
+  }
+
+  function renderInversion(diff) {
+    const sec = $('inversion');
+    invAporte = diff < 0 ? Math.abs(diff) : 0;
+    sec.hidden = invAporte === 0;
+    if (sec.hidden) return;
+
+    const puntos = simularInversion(invAporte, invTasa, INV_ANIOS);
+    const fin = puntos[puntos.length - 1];
+    $('invAporte').textContent = fmtCOP(invAporte);
+    $('invValorFinal').textContent = fmtCOP(fin.valor);
+    $('invMultiplo').textContent = 'invirtiendo ' + fmtCOP(invAporte) + ' al mes durante ' + INV_ANIOS + ' años';
+
+    const box = $('chartInversion');
+    const W = Math.max(300, box.clientWidth);
+    const narrow = W < 520;
+    const left = narrow ? 62 : 78, right = narrow ? 12 : 24, top = 28, bottom = 36;
+    const H = narrow ? 260 : 320;
+    const plotW = W - left - right, plotH = H - top - bottom;
+    const max = niceMax(fin.valor * 1.08);
+    const x = a => left + (a / INV_ANIOS) * plotW;
+    const y = v => top + plotH - (v / max) * plotH;
+
+    box.innerHTML = '';
+    const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, width: W, height: H }, box);
+    const defs = el('defs', {}, svg);
+    const grad = el('linearGradient', { id: 'invGrad', x1: 0, x2: 0, y1: 0, y2: 1 }, defs);
+    el('stop', { offset: '0%', 'stop-color': css('--series-now'), 'stop-opacity': .28 }, grad);
+    el('stop', { offset: '100%', 'stop-color': css('--series-now'), 'stop-opacity': 0 }, grad);
+
+    // Cuadrícula y eje Y
+    const nTicks = 5;
+    for (let i = 0; i <= nTicks; i++) {
+      const v = (max / nTicks) * i;
+      el('line', { x1: left, x2: W - right, y1: y(v), y2: y(v), stroke: css('--grid'), 'stroke-width': 1 }, svg);
+      const t = el('text', { x: left - 8, y: y(v) + 4, 'text-anchor': 'end', fill: css('--text-muted'), 'font-size': 11 }, svg);
+      t.textContent = i === 0 ? '$0' : fmtCorto(v);
+    }
+    // Eje X (años)
+    const pasoX = narrow ? 5 : 2;
+    for (let a = 0; a <= INV_ANIOS; a += pasoX) {
+      const t = el('text', { x: x(a), y: H - bottom + 18, 'text-anchor': 'middle', fill: css('--text-muted'), 'font-size': 11 }, svg);
+      t.textContent = a === 0 ? 'Hoy' : `Año ${a}`;
+    }
+
+    const linea = key => puntos.map((p, i) => `${i ? 'L' : 'M'}${x(p.anio)},${y(p[key])}`).join('');
+    el('path', { d: `${linea('valor')}L${x(INV_ANIOS)},${y(0)}L${x(0)},${y(0)}Z`, fill: 'url(#invGrad)' }, svg);
+    el('path', { d: linea('valor'), fill: 'none', stroke: css('--series-now'), 'stroke-width': 2, 'stroke-linejoin': 'round' }, svg);
+
+    // Etiqueta directa del valor final
+    el('circle', { cx: x(INV_ANIOS), cy: y(fin.valor), r: 4.5, fill: css('--series-now'), stroke: css('--surface-1'), 'stroke-width': 2 }, svg);
+    const lbl = el('text', { x: x(INV_ANIOS) - 8, y: y(fin.valor) - 10, 'text-anchor': 'end', fill: css('--text-primary'), 'font-size': narrow ? 12 : 13, 'font-weight': 700 }, svg);
+    lbl.textContent = fmtCorto(fin.valor);
+
+    // Capa de interacción: línea guía + tooltip por año
+    const cross = el('line', { x1: 0, x2: 0, y1: top, y2: top + plotH, class: 'crosshair', visibility: 'hidden' }, svg);
+    const dot = el('circle', { r: 4.5, fill: css('--series-now'), stroke: css('--surface-1'), 'stroke-width': 2, visibility: 'hidden' }, svg);
+    const hit = el('rect', { x: left, y: top, width: plotW, height: plotH, class: 'hit' }, svg);
+    const mover = evt => {
+      const r = svg.getBoundingClientRect();
+      const px = (evt.clientX - r.left) * (W / r.width);
+      const a = Math.max(0, Math.min(INV_ANIOS, Math.round(((px - left) / plotW) * INV_ANIOS)));
+      const p = puntos[a];
+      cross.setAttribute('x1', x(a)); cross.setAttribute('x2', x(a)); cross.setAttribute('visibility', 'visible');
+      dot.setAttribute('cx', x(a)); dot.setAttribute('cy', y(p.valor)); dot.setAttribute('visibility', 'visible');
+      showTooltip(evt, `<strong>${a === 0 ? 'Hoy' : `Año ${a}`}</strong>
+        <div class="row"><span>Patrimonio</span><span>${fmtCOP(p.valor)}</span></div>`);
+    };
+    const salir = () => { cross.setAttribute('visibility', 'hidden'); dot.setAttribute('visibility', 'hidden'); hideTooltip(); };
+    hit.addEventListener('mousemove', mover);
+    hit.addEventListener('mouseleave', salir);
+    hit.addEventListener('touchstart', e => mover(e.touches[0]), { passive: true });
+    hit.addEventListener('touchmove', e => mover(e.touches[0]), { passive: true });
+    hit.addEventListener('touchend', salir);
+  }
+
   /* ---------- Eventos ---------- */
   function formatearInput(input) {
     const pos = input.value.length - input.selectionStart;
@@ -416,6 +517,18 @@
       // Al restablecer, el salario vuelve a un salario mínimo
       $('salario').value = DEFAULTS.smlmv.toLocaleString('es-CO');
       $('dependientes').value = DEFAULTS.dependientes;
+      actualizar();
+    });
+
+    // Rentabilidad de la simulación de inversión
+    $('invTasas').addEventListener('click', e => {
+      const b = e.target.closest('.chip');
+      if (!b) return;
+      invTasa = Number(b.dataset.tasa);
+      $('invTasas').querySelectorAll('.chip').forEach(c => {
+        c.classList.toggle('is-active', c === b);
+        c.setAttribute('aria-pressed', c === b);
+      });
       actualizar();
     });
 
